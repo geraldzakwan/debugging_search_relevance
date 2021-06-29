@@ -18,3 +18,6 @@ FEATURES = [
         "use": True
     }
 ]
+
+STOPWORDS = False
+NORMALIZATION = False

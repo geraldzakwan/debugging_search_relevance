@@ -1,5 +1,4 @@
-from config import STOPWORDS_FILEPATH, WORD_MAP_FILEPATH
-from toggle import STOPWORDS, NORMALIZATION
+from config import STOPWORDS_FILEPATH, WORD_MAP_FILEPATH, STOPWORDS, NORMALIZATION
 
 def lowercase(sent):
     return sent.lower()
@@ -40,7 +39,7 @@ def normalize(tokens):
             cleaned_tokens.append(token)
 
     return cleaned_tokens
-    
+
 def preprocess(sent):
     tokens = tokenize(lowercase(sent))
 

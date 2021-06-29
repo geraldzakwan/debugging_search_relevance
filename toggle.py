@@ -1,2 +1,0 @@
-STOPWORDS = False
-NORMALIZATION = False
