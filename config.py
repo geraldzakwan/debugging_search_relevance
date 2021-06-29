@@ -12,7 +12,7 @@ FEATURES = [
         "type": "string"
     },
     {
-        "name": "price",
-        "type": "integer"
+        "name": "desc",
+        "type": "string"
     }
 ]

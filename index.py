@@ -4,7 +4,7 @@ import json
 from preprocess import preprocess
 from config import DATA_FILEPATH, INVERTED_INDEX_FILEPATH, FEATURES
 
-if __name__ == '__main__':
+def reindex():
     # Load our product data, see data/products.json
     with open(DATA_FILEPATH, "r") as infile:
         data = json.load(infile)
@@ -53,3 +53,9 @@ if __name__ == '__main__':
                         outfile.write(",")
 
                 outfile.write("\n")
+
+def load_index():
+    pass
+
+if __name__ == '__main__':
+    reindex()
