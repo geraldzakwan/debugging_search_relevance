@@ -33,21 +33,21 @@ def index():
     return "<h1>Presenting you the dumb Search Engine</h1>"
 
 @app.route("/query", methods=["GET", "POST"])
-def classify():
+def query():
     if request.method == "GET":
-        text = request.args.get("keywords", None)
+        keywords = request.args.get("keywords", None)
     elif request.method == "POST":
         json_req = request.get_json()
-        text = json_req["keywords"]
+        keywords = json_req["keywords"]
     else:
         return reply_error(code=400, message="Supported method is 'GET' and 'POST'")
 
-    if text:
+    if keywords:
         return reply_success(data={
-            "keywords": text,
+            "keywords": keywords,
         })
 
-    return reply_error(code=400, message="Text is not specified")
+    return reply_error(code=400, message="Keywords/search terms are not specified")
 
 if __name__ == "__main__":
     if DEBUG:
