@@ -55,7 +55,20 @@ def reindex():
                 outfile.write("\n")
 
 def load_index():
-    pass
+    indexes = {}
+
+    for feature in FEATURES:
+        feature_name = feature["name"]
+        indexes[feature_name] = {}
+
+        with open(os.path.join(INVERTED_INDEX_FILEPATH, feature_name + ".json"), "r") as infile:
+            for line in infile.readlines():
+                term, postings = line.strip("\n").split(" ")
+                posting_list = postings.split(",")
+
+                indexes[feature_name][term] = posting_list
+
+    return indexes
 
 if __name__ == '__main__':
     reindex()
