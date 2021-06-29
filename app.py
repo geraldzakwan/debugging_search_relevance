@@ -6,6 +6,7 @@ from config import DEBUG, PORT
 from config import FEATURES
 from index import load_index
 from matching import match
+from view import fetch
 
 app = Flask(__name__)
 app.indexes = load_index()
@@ -51,10 +52,10 @@ def query():
         return reply_error(code=400, message="Supported method is 'GET' and 'POST'")
 
     if keywords:
-        print(match(app.indexes, app.features, keywords))
+        product_IDs = match(app.indexes, app.features, keywords)
 
         return reply_success(data={
-            "keywords": keywords,
+            "products": fetch(product_IDs),
         })
 
     return reply_error(code=400, message="Keywords/search terms are not specified")
