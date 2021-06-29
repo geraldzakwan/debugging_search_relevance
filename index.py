@@ -57,12 +57,14 @@ def reindex():
 def load_index():
     indexes = {}
 
+    # Load one index per feature
     for feature in FEATURES:
         feature_name = feature["name"]
         indexes[feature_name] = {}
 
         with open(os.path.join(INVERTED_INDEX_FILEPATH, feature_name + ".json"), "r") as infile:
             for line in infile.readlines():
+                # Two important things: term/token and its associated products (the postings)
                 term, postings = line.strip("\n").split(" ")
                 posting_list = postings.split(",")
 

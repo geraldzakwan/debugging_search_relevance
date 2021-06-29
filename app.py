@@ -1,11 +1,21 @@
 import pickle
 
-from os.path import join, dirname
-
 from flask import Flask, request, jsonify
 from config import DEBUG, PORT
 
+from toggle import TITLE, DESC
+from index import load_index
+from matching import match
+
 app = Flask(__name__)
+app.indexes = load_index()
+app.features = []
+
+if TITLE:
+    app.features.append("title")
+
+if DESC:
+    app.features.append("desc")
 
 def reply_success(data):
     response = jsonify({
@@ -43,6 +53,8 @@ def query():
         return reply_error(code=400, message="Supported method is 'GET' and 'POST'")
 
     if keywords:
+        match(app.indexes, app.features, keywords)
+
         return reply_success(data={
             "keywords": keywords,
         })
