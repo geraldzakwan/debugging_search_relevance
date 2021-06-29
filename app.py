@@ -53,7 +53,7 @@ def query():
         return reply_error(code=400, message="Supported method is 'GET' and 'POST'")
 
     if keywords:
-        match(app.indexes, app.features, keywords)
+        print(match(app.indexes, app.features, keywords))
 
         return reply_success(data={
             "keywords": keywords,
