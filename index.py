@@ -16,14 +16,16 @@ def reindex():
         indexes[feature["name"]] = {}
 
     # Populate the index with product data
-    for product_ID, elem in enumerate(data):
+    for product_ID in data:
+        product = data[product_ID]
+
         for feature in FEATURES:
             feature_name = feature["name"]
 
             # For string type feature, we need to tokenize it first
             # Then, each token will be a key!
             if feature["type"] == "string":
-                for token in preprocess(elem[feature_name]):
+                for token in preprocess(product[feature_name]):
                     if not token in indexes[feature_name]:
                         indexes[feature_name][token] = set()
 
@@ -32,10 +34,10 @@ def reindex():
 
             # For numerical features, we let it be (no tokenization whatsoever)
             else:
-                if not elem[feature_name] in indexes[feature_name]:
-                    indexes[feature_name][elem[feature_name]] = set()
+                if not product[feature_name] in indexes[feature_name]:
+                    indexes[feature_name][product[feature_name]] = set()
 
-                indexes[feature_name][elem[feature_name]].add(product_ID)
+                indexes[feature_name][product[feature_name]].add(product_ID)
 
     # Dump index to text file, example format: "asus 0,1"
     # See data/inverted_index for details (there is one file for each feature)
