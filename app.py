@@ -3,7 +3,7 @@ import pickle
 from flask import Flask, request, jsonify
 from config import DEBUG, PORT
 
-from toggle import TITLE, DESC
+from config import FEATURES
 from index import load_index
 from matching import match
 
@@ -11,11 +11,9 @@ app = Flask(__name__)
 app.indexes = load_index()
 app.features = []
 
-if TITLE:
-    app.features.append("title")
-
-if DESC:
-    app.features.append("desc")
+for feature in FEATURES:
+    if feature["use"]:
+        app.features.append(feature["name"])
 
 def reply_success(data):
     response = jsonify({

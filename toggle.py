@@ -1,4 +1,2 @@
-TITLE = True
-DESC = True
 STOPWORDS = False
 NORMALIZATION = False

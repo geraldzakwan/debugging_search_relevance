@@ -28,4 +28,4 @@ def match(indexes, fields, search_terms):
 
 if __name__ == '__main__':
     indexes = load_index()
-    print(match(indexes, ["title", "desc"], "jual hp asus"))
+    print(match(indexes, ["title", "desc"], "hp asus"))
