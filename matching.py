@@ -1,8 +1,9 @@
 from index import load_index
 from preprocess import preprocess
 
-# Will return product IDs using AND logic to aggregate results
-# from various fields (feature is limited to string only)
+# Will return matched product IDs
+# For a result to be retrieved, all search terms must be included
+# in at least one of the fields (field is limited to string only)
 def match(indexes, fields, search_terms):
     tokens = preprocess(search_terms)
 
@@ -10,13 +11,18 @@ def match(indexes, fields, search_terms):
     matching_postings = []
 
     for token in tokens:
+        matching_postings_per_token = set()
+
         for field in fields:
             if token in indexes[field]:
-                matching_postings.append(set(indexes[field][token]))
-            else:
-                # Directly return an empty set when there is a term/token
-                # that doesn't match any documents
-                return set()
+                matching_postings_per_token = matching_postings_per_token.union(set(indexes[field][token]))
+
+        # Directly return an empty set when there is a term/token
+        # that doesn't match any field in any documents
+        if len(matching_postings_per_token) == 0:
+            return set()
+
+        matching_postings.append(matching_postings_per_token)
 
     result_sets = matching_postings[0]
 
