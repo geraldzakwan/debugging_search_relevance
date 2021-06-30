@@ -2,7 +2,7 @@ import os
 import json
 
 from preprocess import preprocess
-from config import DATA_FILEPATH, INVERTED_INDEX_FILEPATH, FEATURES
+from config import DATA_FILEPATH, INVERTED_INDEX_FILEPATH, TERM_COUNT_FILEPATH, FEATURES
 
 def reindex():
     # Load our product data, see data/products.json
@@ -10,59 +10,74 @@ def reindex():
         data = json.load(infile)
 
     # Initiate index
-    # Each feature will have its own (inverted) index
-    indexes = {}
+    # Each feature will have its own (inverted and term count) index
+    posting_indexes = {}
     for feature in FEATURES:
-        indexes[feature["name"]] = {}
+        posting_indexes[feature["name"]] = {}
+
+    term_count_indexes = {}
 
     # Populate the index with product data
     for product_ID in data:
         product = data[product_ID]
+        term_count_indexes[product_ID] = {}
 
         for feature in FEATURES:
             feature_name = feature["name"]
+            term_count_indexes[product_ID][feature_name] = 0
 
             # For string type feature, we need to tokenize it first
             # Then, each token will be a key!
             if feature["type"] == "string":
                 for token in preprocess(product[feature_name]):
-                    if not token in indexes[feature_name]:
-                        indexes[feature_name][token] = set()
+                    term_count_indexes[product_ID][feature_name] += 1
+
+                    if not token in posting_indexes[feature_name]:
+                        posting_indexes[feature_name][token] = set()
 
                     # The (list of) value will be the product id
-                    indexes[feature_name][token].add(product_ID)
+                    posting_indexes[feature_name][token].add(product_ID)
 
             # For numerical features, we let it be (no tokenization whatsoever)
             else:
-                if not product[feature_name] in indexes[feature_name]:
-                    indexes[feature_name][product[feature_name]] = set()
+                if not product[feature_name] in posting_indexes[feature_name]:
+                    posting_indexes[feature_name][product[feature_name]] = set()
 
-                indexes[feature_name][product[feature_name]].add(product_ID)
+                posting_indexes[feature_name][product[feature_name]].add(product_ID)
 
-    # Dump index to text file, example format: "asus 0,1"
+    # Dump inverted index to text file, example format: "asus 0,1"
     # See data/inverted_index for details (there is one file for each feature)
     for feature in FEATURES:
         feature_name = feature["name"]
 
         with open(os.path.join(INVERTED_INDEX_FILEPATH, feature_name + ".json"), "w") as outfile:
-            for elem in indexes[feature_name]:
+            for elem in posting_indexes[feature_name]:
                 outfile.write(str(elem) + " ")
 
-                for idx, product_ID in enumerate(indexes[feature_name][elem]):
+                for idx, product_ID in enumerate(posting_indexes[feature_name][elem]):
                     outfile.write(str(product_ID))
 
-                    if idx < len(indexes[feature_name][elem]) - 1:
+                    if idx < len(posting_indexes[feature_name][elem]) - 1:
                         outfile.write(",")
 
                 outfile.write("\n")
 
-def load_index():
-    indexes = {}
+    # Dump term count index to text file
+    # See data/term_count_index for details (there is one file for each feature)
+    for feature in FEATURES:
+        feature_name = feature["name"]
+
+        with open(os.path.join(TERM_COUNT_FILEPATH, feature_name + ".json"), "w") as outfile:
+            for product_ID in data:
+                outfile.write(product_ID + " " + str(term_count_indexes[product_ID][feature_name]) + "\n")
+
+def load_posting_index():
+    posting_indexes = {}
 
     # Load one index per feature
     for feature in FEATURES:
         feature_name = feature["name"]
-        indexes[feature_name] = {}
+        posting_indexes[feature_name] = {}
 
         with open(os.path.join(INVERTED_INDEX_FILEPATH, feature_name + ".json"), "r") as infile:
             for line in infile.readlines():
@@ -70,9 +85,37 @@ def load_index():
                 term, postings = line.strip("\n").split(" ")
                 posting_list = postings.split(",")
 
-                indexes[feature_name][term] = posting_list
+                posting_indexes[feature_name][term] = posting_list
 
-    return indexes
+    return posting_indexes
+
+def load_term_count_index():
+    term_count_indexes = {}
+
+    # Load our product data, see data/products.json
+    with open(DATA_FILEPATH, "r") as infile:
+        data = json.load(infile)
+
+    term_count_indexes = {}
+    for product_ID in data:
+        term_count_indexes[product_ID] = {}
+
+    # Load one index per feature
+    for feature in FEATURES:
+        feature_name = feature["name"]
+
+        with open(os.path.join(TERM_COUNT_FILEPATH, feature_name + ".json"), "r") as infile:
+            for line in infile.readlines():
+                product_ID, term_count = line.strip("\n").split(" ")
+
+                term_count_indexes[product_ID][feature_name] = int(term_count)
+
+    return term_count_indexes
 
 if __name__ == '__main__':
     reindex()
+    print("-" * 100)
+    print(load_posting_index())
+    print("-" * 100)
+    print(load_term_count_index())
+    print("-" * 100)

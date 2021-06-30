@@ -3,6 +3,8 @@ DEBUG = True
 
 DATA_FILEPATH = "data/products.json"
 INVERTED_INDEX_FILEPATH = "data/inverted_index"
+TERM_COUNT_FILEPATH = "data/term_count_index"
+
 STOPWORDS_FILEPATH = "data/preprocessing/stopwords.txt"
 WORD_MAP_FILEPATH = "data/preprocessing/word_map.txt"
 

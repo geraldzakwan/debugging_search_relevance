@@ -1,4 +1,4 @@
-from index import load_index
+from index import load_posting_index
 
 # Will return matched product IDs
 # For a result to be retrieved, all search terms must be included
@@ -30,5 +30,5 @@ def match(indexes, fields, tokens):
     return result_sets
 
 if __name__ == '__main__':
-    indexes = load_index()
+    indexes = load_posting_index()
     print(match(indexes, ["title", "desc"], "hp asus"))

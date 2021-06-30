@@ -4,14 +4,14 @@ from flask import Flask, request, jsonify
 from config import DEBUG, PORT
 
 from config import FEATURES
-from index import load_index
+from index import load_posting_index
 from view import fetch
 
 from preprocess import preprocess
 from matching import match
 
 app = Flask(__name__)
-app.indexes = load_index()
+app.indexes = load_posting_index()
 app.features = []
 
 for feature in FEATURES:
