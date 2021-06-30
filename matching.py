@@ -1,12 +1,9 @@
 from index import load_index
-from preprocess import preprocess
 
 # Will return matched product IDs
 # For a result to be retrieved, all search terms must be included
 # in at least one of the fields (field is limited to string only)
-def match(indexes, fields, search_terms):
-    tokens = preprocess(search_terms)
-
+def match(indexes, fields, tokens):
     # Matching product IDs given a term (in respect to a certain field)
     matching_postings = []
 
