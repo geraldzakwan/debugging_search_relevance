@@ -4,15 +4,18 @@ from flask import Flask, request, jsonify
 from config import DEBUG, PORT
 
 from config import FEATURES
-from index import load_posting_index
-from view import fetch
+from index import load_posting_index, load_term_count_index
+from view import fetch, fetch_with_score
 
 from preprocess import preprocess
 from matching import match
+from ranking import rank
 
 app = Flask(__name__)
-app.indexes = load_posting_index()
 app.features = []
+
+app.posting_indexes = load_posting_index()
+app.term_count_indexes = load_term_count_index
 
 for feature in FEATURES:
     if feature["use"]:
@@ -55,7 +58,7 @@ def do_analyze():
 
     if keywords:
         return reply_success(data={
-            "analyzed_search_terms": preprocess(keywords),
+            "tokens": preprocess(keywords),
         })
 
     return reply_error(code=400, message="Keywords/search terms are not specified")
@@ -71,7 +74,8 @@ def do_match():
         return reply_error(code=400, message="Supported method is 'GET' and 'POST'")
 
     if keywords:
-        product_IDs = match(app.indexes, app.features, preprocess(keywords))
+        tokens = preprocess(keywords)
+        product_IDs = match(app.posting_indexes, app.features, tokens)
 
         return reply_success(data={
             "products": fetch(product_IDs),
@@ -90,10 +94,12 @@ def do_rank():
         return reply_error(code=400, message="Supported method is 'GET' and 'POST'")
 
     if keywords:
-        product_IDs = match(app.indexes, app.features, keywords)
+        tokens = preprocess(keywords)
+        product_IDs = match(app.posting_indexes, app.features, tokens)
+        sorted_products = rank(app.posting_indexes, app.term_count_indexes, tokens, product_IDs)
 
         return reply_success(data={
-            "products": fetch(product_IDs),
+            "products": fetch_with_score(sorted_products),
         })
 
     return reply_error(code=400, message="Keywords/search terms are not specified")
