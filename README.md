@@ -187,4 +187,4 @@ See `data/preprocessing/stopwords.txt` and `data/preprocessing/word_map.txt`
 # Contact
 
 - Should you have any questions, please shoot an email to `geraldi.dzakwan@gmail.com`
-- If you are a `Bukalapak`'s employee, please reach me on Slack
+- If you are a `Bukalapak`'s employee, please reach me on `Slack` (`Geraldi Dzakwan`) 
