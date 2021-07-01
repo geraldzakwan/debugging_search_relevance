@@ -183,3 +183,8 @@ See `data/preprocessing/stopwords.txt` and `data/preprocessing/word_map.txt`
 - You need to understand and modify my code/scoring function
 - See function `rank` in `ranking.py`
 - If you want to use something other than `TF-IDF`, replace `compute_tf` and `compute_idf` with your own function
+
+# Contact
+
+- Should you have any questions, please shoot an email to `geraldi.dzakwan@gmail.com`
+- If you are a `Bukalapak`'s employee, please reach me on Slack
