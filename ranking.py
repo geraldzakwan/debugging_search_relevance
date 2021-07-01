@@ -1,7 +1,15 @@
 from config import FEATURES
 
 def compute_tf(feature_name, product_ID, token, term_count_indexes):
-    return 1
+    if token in term_count_indexes[product_ID][feature_name]:
+        total_term_count = 0
+
+        for indexed_token in term_count_indexes[product_ID][feature_name]:
+            total_term_count += term_count_indexes[product_ID][feature_name][indexed_token]
+
+        return term_count_indexes[product_ID][feature_name][token]/total_term_count
+    else:
+        return 1
 
 def compute_idf(feature_name, token, posting_indexes):
     if token in posting_indexes[feature_name]:
