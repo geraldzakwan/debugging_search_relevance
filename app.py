@@ -15,7 +15,7 @@ app = Flask(__name__)
 app.features = []
 
 app.posting_indexes = load_posting_index()
-app.term_count_indexes = load_term_count_index
+app.term_count_indexes = load_term_count_index()
 
 for feature in FEATURES:
     if feature["use"]:
