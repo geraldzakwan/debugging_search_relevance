@@ -150,3 +150,36 @@ See `data/preprocessing/stopwords.txt` and `data/preprocessing/word_map.txt`
     }
 }
 ```
+
+# How to Experiment
+
+1. Adding/Deleting/Changing Products
+
+- Alter products in `data/products.json`
+- Reindex after altering: `python3 index.py`
+- This will create a new `data/inverted_index` and `data/term_count_index`
+
+2. Adding/Deleting/Changing Features
+
+- Currently, this service only support `string` features
+- Define the feature metadata in `config.py`, change the `FEATURES` variable
+- Again, reindex after adding/deleting/changing features
+
+3. Changing preprocessing
+
+- Currently, I do the following: punctuation removal, lowercase, stopwords removal and normalization
+- Please add/delete/change the preprocessing accordingly in `preprocess` function in `preprocess.py`
+
+4. Changing matching algorithm
+
+- This is a bit hard unfortunately, you need to understand and modify my code if you want to change the logic
+- See function `match` in `matching.py`
+
+5. Changing ranking algorithm
+
+- If you just wanna switch the version of `TF-IDF`, please see `config.py`
+- There I provide you with the raw and normalized version of `TF-IDF`
+- However, if you wish to change further, that would be hard unfortunately
+- You need to understand and modify my code/scoring function
+- See function `rank` in `ranking.py`
+- If you want to use something other than `TF-IDF`, replace `compute_tf` and `compute_idf` with your own function
