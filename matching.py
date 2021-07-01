@@ -23,7 +23,7 @@ def match(indexes, fields, tokens):
         # Directly return an empty set when there is a term/token
         # that doesn't match any field in any documents
         if len(matching_postings_per_token) == 0:
-            return set()
+            return set(), detail_matching
 
         matching_postings.append(matching_postings_per_token)
 
