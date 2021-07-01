@@ -12,7 +12,7 @@ def fetch(IDs):
 
     return result
 
-def fetch_with_score(sorted_products):
+def fetch_with_score(sorted_products, detail_scores):
     with open(DATA_FILEPATH, "r") as infile:
         data = json.load(infile)
 
@@ -26,8 +26,15 @@ def fetch_with_score(sorted_products):
 
     result = []
     for idx, ID in enumerate(sorted_product_IDs):
+        scores = {
+            "final_score": sorted_product_scores[idx],
+            "tf": detail_scores["tf"],
+            "idf": detail_scores["idf"]
+        }
+
         product_data = data[ID]
-        product_data["score"] = sorted_product_scores[idx]
+        product_data["scores"] = scores
+
         result.append(product_data)
 
     return result

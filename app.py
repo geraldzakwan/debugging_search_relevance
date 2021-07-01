@@ -18,8 +18,7 @@ app.posting_indexes = load_posting_index()
 app.term_count_indexes = load_term_count_index()
 
 for feature in FEATURES:
-    if feature["use"]:
-        app.features.append(feature["name"])
+    app.features.append(feature["name"])
 
 def reply_success(data):
     response = jsonify({
@@ -96,10 +95,10 @@ def do_rank():
     if keywords:
         tokens = preprocess(keywords)
         product_IDs = match(app.posting_indexes, app.features, tokens)
-        sorted_products = rank(app.posting_indexes, app.term_count_indexes, tokens, product_IDs)
+        sorted_products, detail_scores = rank(app.posting_indexes, app.term_count_indexes, tokens, product_IDs)
 
         return reply_success(data={
-            "products": fetch_with_score(sorted_products),
+            "products": fetch_with_score(sorted_products, detail_scores),
         })
 
     return reply_error(code=400, message="Keywords/search terms are not specified")

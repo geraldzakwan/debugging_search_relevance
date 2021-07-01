@@ -32,14 +32,29 @@ def rank(posting_indexes, term_count_indexes, tokens, product_IDs):
     for product_ID in product_IDs:
         product_scores[product_ID] = 1
 
+    detail_scores = {}
+    detail_scores["tf"] = {}
+    detail_scores["idf"] = {}
+
+    for feature in FEATURES:
+        feature_name = feature["name"]
+
+        detail_scores["idf"][feature_name]= {}
+        detail_scores["tf"][feature_name] = {}
+
+        for product_ID in product_IDs:
+            detail_scores["tf"][feature_name][product_ID] = {}
+
     for feature in FEATURES:
         feature_name = feature["name"]
 
         for token in tokens:
             idf_score = compute_idf(feature_name, token, posting_indexes, term_count_indexes)
+            detail_scores["idf"][feature_name][token] = idf_score
 
             for product_ID in product_IDs:
                 tf_score = compute_tf(feature_name, product_ID, token, term_count_indexes)
+                detail_scores["tf"][feature_name][product_ID][token] = tf_score
 
                 product_scores[product_ID] = product_scores[product_ID] * tf_score * idf_score
 
@@ -47,4 +62,4 @@ def rank(posting_indexes, term_count_indexes, tokens, product_IDs):
     for product_ID in product_scores:
         product_scores_list.append((product_ID, product_scores[product_ID]))
 
-    return sorted(product_scores_list, key=lambda x: x[1], reverse=True)
+    return sorted(product_scores_list, key=lambda x: x[1], reverse=True), detail_scores

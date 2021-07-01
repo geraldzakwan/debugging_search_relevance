@@ -11,13 +11,11 @@ WORD_MAP_FILEPATH = "data/preprocessing/word_map.txt"
 FEATURES = [
     {
         "name": "title",
-        "type": "string",
-        "use": True
+        "type": "string"
     },
     {
         "name": "desc",
-        "type": "string",
-        "use": True
+        "type": "string"
     }
 ]
 
