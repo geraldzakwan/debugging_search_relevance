@@ -4,28 +4,28 @@ from config import FEATURES, TF_VARIATIONS, TF_VERSION, IDF_VERSION, IDF_VARIATI
 
 def compute_tf(feature_name, product_ID, token, term_count_indexes):
     if token in term_count_indexes[product_ID][feature_name]:
+        if TF_VARIATIONS[TF_VERSION] == "RAW":
+            return float(term_count_indexes[product_ID][feature_name][token])
+
         total_term_count = 0
 
         for indexed_token in term_count_indexes[product_ID][feature_name]:
             total_term_count += term_count_indexes[product_ID][feature_name][indexed_token]
 
-        if TF_VARIATIONS[TF_VERSION] == "FREQ":
-            return total_term_count
-
-        return term_count_indexes[product_ID][feature_name][token]/total_term_count
+        return float(term_count_indexes[product_ID][feature_name][token]/total_term_count)
     else:
-        return 1
+        return float(1)
 
 def compute_idf(feature_name, token, posting_indexes, term_count_indexes):
     if token in posting_indexes[feature_name]:
-        idf = len(term_count_indexes) / len(posting_indexes[feature_name][token])
+        idf = float(len(term_count_indexes) / len(posting_indexes[feature_name][token]))
 
         if IDF_VARIATIONS[IDF_VERSION] == "RAW":
             return idf
 
         return math.log(idf)
     else:
-        return 1
+        return float(1)
 
 def rank(posting_indexes, term_count_indexes, tokens, product_IDs):
     product_scores = {}

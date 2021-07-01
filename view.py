@@ -33,6 +33,8 @@ def fetch_with_score(sorted_products, detail_scores):
         }
 
         product_data = data[ID]
+        
+        product_data["ID"] = ID
         product_data["scores"] = scores
 
         result.append(product_data)
