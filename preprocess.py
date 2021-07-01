@@ -1,4 +1,9 @@
+import string
+
 from config import STOPWORDS_FILEPATH, WORD_MAP_FILEPATH, STOPWORDS, NORMALIZATION
+
+def remove_punctuation(sent):
+    return sent.translate(str.maketrans('', '', string.punctuation))
 
 def lowercase(sent):
     return sent.lower()
@@ -41,7 +46,7 @@ def normalize(tokens):
     return cleaned_tokens
 
 def preprocess(sent):
-    tokens = tokenize(lowercase(sent))
+    tokens = tokenize(lowercase(remove_punctuation(sent)))
 
     if NORMALIZATION:
         tokens = normalize(tokens)

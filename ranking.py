@@ -1,4 +1,6 @@
-from config import FEATURES
+import math
+
+from config import FEATURES, TF_VARIATIONS, TF_VERSION, IDF_VERSION, IDF_VARIATIONS
 
 def compute_tf(feature_name, product_ID, token, term_count_indexes):
     if token in term_count_indexes[product_ID][feature_name]:
@@ -7,13 +9,21 @@ def compute_tf(feature_name, product_ID, token, term_count_indexes):
         for indexed_token in term_count_indexes[product_ID][feature_name]:
             total_term_count += term_count_indexes[product_ID][feature_name][indexed_token]
 
+        if TF_VARIATIONS[TF_VERSION] == "FREQ":
+            return total_term_count
+
         return term_count_indexes[product_ID][feature_name][token]/total_term_count
     else:
         return 1
 
-def compute_idf(feature_name, token, posting_indexes):
+def compute_idf(feature_name, token, posting_indexes, term_count_indexes):
     if token in posting_indexes[feature_name]:
-        return 1 / len(posting_indexes[feature_name][token])
+        idf = len(term_count_indexes) / len(posting_indexes[feature_name][token])
+
+        if IDF_VARIATIONS[IDF_VERSION] == "RAW":
+            return idf
+
+        return math.log(idf)
     else:
         return 1
 
@@ -26,7 +36,7 @@ def rank(posting_indexes, term_count_indexes, tokens, product_IDs):
         feature_name = feature["name"]
 
         for token in tokens:
-            idf_score = compute_idf(feature_name, token, posting_indexes)
+            idf_score = compute_idf(feature_name, token, posting_indexes, term_count_indexes)
 
             for product_ID in product_IDs:
                 tf_score = compute_tf(feature_name, product_ID, token, term_count_indexes)
