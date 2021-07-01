@@ -14,7 +14,7 @@ def compute_tf(feature_name, product_ID, token, term_count_indexes):
 
         return float(term_count_indexes[product_ID][feature_name][token]/total_term_count)
     else:
-        return float(1)
+        return 0
 
 def compute_idf(feature_name, token, posting_indexes, term_count_indexes):
     if token in posting_indexes[feature_name]:
@@ -25,7 +25,7 @@ def compute_idf(feature_name, token, posting_indexes, term_count_indexes):
 
         return math.log(idf)
     else:
-        return float(1)
+        return 0
 
 def rank(posting_indexes, term_count_indexes, tokens, product_IDs):
     product_scores = {}
@@ -50,13 +50,18 @@ def rank(posting_indexes, term_count_indexes, tokens, product_IDs):
 
         for token in tokens:
             idf_score = compute_idf(feature_name, token, posting_indexes, term_count_indexes)
-            detail_scores["idf"][feature_name][token] = idf_score
+
+            if idf_score > 0:
+                detail_scores["idf"][feature_name][token] = idf_score
 
             for product_ID in product_IDs:
                 tf_score = compute_tf(feature_name, product_ID, token, term_count_indexes)
-                detail_scores["tf"][feature_name][product_ID][token] = tf_score
 
-                product_scores[product_ID] = product_scores[product_ID] * tf_score * idf_score
+                if tf_score > 0:
+                    detail_scores["tf"][feature_name][product_ID][token] = tf_score
+
+                if tf_score > 0 and idf_score > 0:
+                    product_scores[product_ID] = product_scores[product_ID] * tf_score * idf_score
 
     product_scores_list = []
     for product_ID in product_scores:
