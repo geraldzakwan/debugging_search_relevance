@@ -2,13 +2,16 @@ import json
 
 from config import DATA_FILEPATH, INVERTED_INDEX_FILEPATH, FEATURES
 
-def fetch(IDs):
+def fetch_with_match(IDs, detail_matching):
     with open(DATA_FILEPATH, "r") as infile:
         data = json.load(infile)
 
     result = []
     for ID in IDs:
-        result.append(data[ID])
+        product = data[ID]
+        product["match"] = detail_matching
+
+        result.append(product)
 
     return result
 

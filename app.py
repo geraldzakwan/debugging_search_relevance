@@ -5,7 +5,7 @@ from config import DEBUG, PORT
 
 from config import FEATURES
 from index import load_posting_index, load_term_count_index
-from view import fetch, fetch_with_score
+from view import fetch_with_match, fetch_with_score
 
 from preprocess import preprocess
 from matching import match
@@ -74,10 +74,10 @@ def do_match():
 
     if keywords:
         tokens = preprocess(keywords)
-        product_IDs = match(app.posting_indexes, app.features, tokens)
+        product_IDs, detail_matching = match(app.posting_indexes, app.features, tokens)
 
         return reply_success(data={
-            "products": fetch(product_IDs),
+            "products": fetch_with_match(product_IDs, detail_matching),
         })
 
     return reply_error(code=400, message="Keywords/search terms are not specified")
@@ -94,7 +94,7 @@ def do_rank():
 
     if keywords:
         tokens = preprocess(keywords)
-        product_IDs = match(app.posting_indexes, app.features, tokens)
+        product_IDs, detail_matching = match(app.posting_indexes, app.features, tokens)
         sorted_products, detail_scores = rank(app.posting_indexes, app.term_count_indexes, tokens, product_IDs)
 
         return reply_success(data={
